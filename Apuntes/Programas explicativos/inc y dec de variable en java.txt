@@ -1,0 +1,44 @@
+//Programa que incrementa y decrementa un entero
+
+0        inc   dec
+
+--------------------------------------------------------------------
+
+import java.awt.*;
+import java.applet.*;
+import java.awt.event.*;
+
+public class IncDec extends Appplet implements ActionListener {
+	Label l;
+	Button binc, bdec;
+	int cta;
+
+	public void init(){
+		cta=0;
+		l=new Label ("0");
+		binc=new Button("Incrementa");
+		bdec=new Button("Decrementa");
+		add(l); add(binc);add(bdec);
+// Hasta ahorita llevamos dos fuentes de eventos
+		binc.addActionListener(this);
+		bdec.addActionListener(this);
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		
+		Button b = (Button)e.getSource(); // b es local
+		if(b == binc) cta=cta+1;
+		if(b == bdec) cta=cta-1;
+		l.setText(""+cta);
+	}
+
+//El ambito de una variable es donde es valido usar la variable local
+
+}
+
+
+
+
+
+
+
