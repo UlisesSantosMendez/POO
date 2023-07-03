@@ -1,0 +1,368 @@
+/*
+NOMBRE: SANTOS MENDEZ ULISES JESUS
+GRUPO: 2CM11
+MATERIA: PROGRAMACIÓN ORIENTADA A OBJETOS
+TEMA: GUIA POO
+PROBLEMA 1 (HILOS): CUENTA SEGUNDOS
+FECHA DE ENTREGA: 18/06/2021
+//////////////////////////////////////
+Codificar una clase llamada CuentaSegundos que implemente la interfaz
+Runnable:
+- Que cada segundo incremente en una unidad un contador y muestre el valor
+de dicho contador en una etiqueta
+- Que cuando llegue a u valor limite(que se establece cuando se crea un objeto)
+deje de incrementar el contador y de actualizar el valor mostrado
+Sugerencia extienda la clase Label y asigne cero al contenedor en el constructor
+*/
+import java.awt.*;
+import javax.swing.*;	
+
+public class CuentaSegundos extends JFrame implements Runnable{
+	Panel p1;
+	Thread hilo;
+	int counter, limitecont;
+	JLabel etique;
+public CuentaSegundos(int limite){
+		p1 = new Panel();
+		counter = 0;
+		limitecont = limite;
+		etique = new JLabel("0");
+		add(p1,"Center");
+		p1.add(etique);
+		setSize(200, 200);
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		hilo = new Thread(this);
+		hilo.start();
+	}
+	public void run(){
+		while(counter <= limitecont){
+			try{
+				hilo.sleep(1000);
+				etique.setText(""+counter);
+			}catch(InterruptedException e){
+				return;
+			}counter++;
+		}
+	}
+	public static void main (String[] args) {
+		new CuentaSegundos(10);
+	}
+}
+/////////////////////////////////////////////////////////////////////////
+/*
+NOMBRE: SANTOS MENDEZ ULISES JESUS
+GRUPO: 2CM11
+MATERIA: PROGRAMACIÓN ORIENTADA A OBJETOS
+TEMA: GUIA POO
+PROBLEMA 2 (HILOS): TICKER
+FECHA DE ENTREGA: 18/06/2021
+//////////////////////////////////////
+Codifica una clase llamada Ticker que mueva las letras de un texto de 
+izquierda a derecha (o de derecha a izquierda). Se puede quitar la primera
+letra y pegarla (con+) al final y repetir esto de forma periodica
+*/
+import javax.swing.*;	
+
+public class Ticker implements Runnable {
+
+	Thread TickerHilo;
+	String s1,sub;
+	int sleepTime;
+	char c1;
+
+	public Ticker(String s1, int sleep){
+		this.s1=s1;
+		sleepTime=sleep;
+		TickerHilo=new Thread(this);
+		TickerHilo.start();
+	}
+
+	public void run(){
+		System.out.println(s1);
+		while(true){
+			c1 = s1.charAt(0);
+			sub = s1.substring(1,s1.length());
+			s1 = sub + c1;
+			System.out.println(sub + c1);
+			try{
+				Thread.sleep(sleepTime);
+			} catch (Exception e) {
+				return;
+			}
+		}
+	}
+
+	public static void main(String args[]){
+		new Ticker("Ulises Santos Mendez ", 50);
+	}
+}
+/////////////////////////////////////////////////////////////////////////////
+/*
+NOMBRE: SANTOS MENDEZ ULISES JESUS
+GRUPO: 2CM11
+MATERIA: PROGRAMACIÓN ORIENTADA A OBJETOS
+TEMA: GUIA POO
+PROBLEMA 3 (HILOS): ARREGLO DE CADENAS
+FECHA DE ENTREGA: 18/06/2021
+//////////////////////////////////////
+Codificar un programa que permita al usuario introducir varios textos
+(el usuario escribe un texto en un campo de entrada y dicho texto se
+almacena cuando el usuario presiona un boton).
+Guarde los textos en un arreglo de cadenas y use un hilo para que
+despues de un cierto numero de segundos el texto actual en una etiqueta se
+constituye por el siguiente texto en el arreglo.
+NOTA: El programa puede ser una aplicacion en modo texto y el arreglo
+donde se almacenan las cadenas puede ser el que se pasa como parametro al
+metodo main y la cadena actual se puede mostrar en consola en lugar de una 
+etiqueta.
+*/
+import java.awt.event.*;
+import javax.swing.*;
+
+public class IntroduceCadenas extends JFrame implements Runnable, ActionListener
+{
+    JLabel l1;
+    JTextField t1;
+    JButton b1;
+    String cad[];
+    Thread hil;
+    int counter, limit;
+
+    public IntroduceCadenas(int n)
+    {
+        limit = n;
+        cad = new String[limit];
+        counter = 0;
+
+        l1 = new JLabel("Faltan " + n + " cadenas");
+        t1 = new JTextField("");
+        b1 = new JButton("AGREGAR CADENA");
+
+        setLayout(null);
+        t1.setBounds(100, 50, 250, 50);
+        b1.setBounds(100, 150, 250, 50);
+        l1.setBounds(100, 250, 250, 50);
+
+        b1.addActionListener(this);
+
+        add(t1);
+        add(b1);
+        add(l1);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(0, 0, 500, 500);
+        hil = new Thread(this);
+    }
+    public void run()
+    {
+        int i = 0;
+        try
+        {
+            while(true)
+            {
+                l1.setText(cad[i]);
+                hil.sleep(1000);
+                i = (i + 1) % counter;
+            }
+        } 
+        catch(Exception e) 
+        {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+    public void actionPerformed(ActionEvent e)
+    {
+        cad[counter] = t1.getText();
+        counter++;
+        l1.setText("Faltan " + (limit - counter) + " cadenas ");
+        if(counter == limit)
+        {
+            b1.setEnabled(false);
+            t1.setEnabled(false);
+            hil.start();
+        }
+    }
+
+    public static void main(String args[])
+    {
+        IntroduceCadenas a = new IntroduceCadenas(4);
+    }
+}
+///////////////////////////////////////////////////////////////////////////
+/*
+NOMBRE: SANTOS MENDEZ ULISES JESUS
+GRUPO: 2CM11
+MATERIA: PROGRAMACIÓN ORIENTADA A OBJETOS
+TEMA: GUIA POO
+PROBLEMA 1 (SOCKETS): SERVIDOR HOLA MUNDO
+FECHA DE ENTREGA: 18/06/2021
+//////////////////////////////////////
+Codificar un servidor que cuando un cliente se conecte le envie la cadena
+"Hola Mundo"
+*/
+//-----------------------CLIENTE-------------------------------------------
+import java.io.*;
+import java.net.*;
+import java.applet.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.*;
+import java.util.*;
+
+public class Cliente extends JPanel implements ActionListener {
+	Label l1;
+	Button b1;
+	public Cliente(){
+		b1=new Button ("CONECTAR");
+		l1=new Label ("********");
+		add(b1);
+		add(l1);
+		b1.addActionListener(this);
+	}
+	public void actionPerformed (ActionEvent e){
+		try{
+		Socket cliente =new Socket("localhost",4500);
+		ObjectInputStream entrada=new ObjectInputStream(cliente.getInputStream());
+		String mensaje3 =(String)entrada.readObject();
+		l1.setText(mensaje3);
+		System.out.println("Mensaje del SERVIDOR:"+mensaje3);
+		}catch(ClassNotFoundException ex){
+			Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE,null,ex);
+		}catch(IOException ex){
+			Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE,null,ex);
+		}
+	}
+	public static void main(String[] args){
+		JFrame f=new JFrame("Cliente");
+		f.add("Center", new Cliente());
+       	f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);  
+	    f.setSize(900, 200);
+	    f.setVisible(true);
+	}
+}
+//---------------------------------SERVIDOR----------------------------------
+import java.io.*;
+import java.net.*;
+import java.applet.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.*;
+import java.util.*;
+public class Servidor{
+	public static void main(String[] args){
+		String caden="Hola mundo";
+		for (;;){
+			try{
+				ServerSocket servidor3=new ServerSocket(4500);
+				Socket clienteNuevo = servidor3.accept();
+                ObjectOutputStream r = new ObjectOutputStream(clienteNuevo.getOutputStream());
+				r.writeObject(caden);
+				clienteNuevo.close();
+				servidor3.close();
+			}
+			catch(Exception ex){
+			Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE,null,ex);
+			}
+		}
+	}
+}
+////////////////////////////////////////////////////////////////////////////////
+/*
+NOMBRE: SANTOS MENDEZ ULISES JESUS
+GRUPO: 2CM11
+MATERIA: PROGRAMACIÓN ORIENTADA A OBJETOS
+TEMA: GUIA POO
+PROBLEMA 2 (SOCKETS): SERVIDOR NOMBRE CLIENTE
+FECHA DE ENTREGA: 18/06/2021
+//////////////////////////////////////
+Codificar un servidor que cuando un cliente se conecte lea el nombre del
+cliente y le envié a dicho cliente el nombre del ultimo usuario que se conecto
+*/
+//--------------------------------CLIENTE--------------------------------------
+import java.net.*;
+import java.io.*;
+ 
+public class Cliente {
+    private DataInputStream in;
+    private DataOutputStream exit;
+    private Socket s1;
+    public Cliente(String name)
+    {
+        Thread hilo = new Thread new Runnable() {
+            public void run() 
+            {
+                try
+                {
+                    s1 = new Socket("localhost", 5000);
+                    in = new DataInputStream(s1.getInputStream());
+                    exit = new DataOutputStream(s1.getOutputStream());
+
+                    exit.flush();
+                    exit.writeUTF(name);
+                    System.out.println("Ultimo cliente conectado al servidor: " + in.readUTF());
+                }
+                catch (IOException ex)
+                {
+                }
+            }
+        });
+        hilo.start();
+    }
+
+    public static void main(String args[])
+    {
+        Cliente c1 = new Cliente(args[0]);
+    }
+}
+//---------------------------------SERVIDOR-----------------------------------
+import java.net.*;
+import java.io.*;
+import java.util.*;
+ 
+public class Servidor {
+ 	private ServerSocket server;
+    private DataOutputStream exit;
+    private DataInputStream in;
+    private Socket s1;
+    private Vector <String> v1;
+
+    public Servidor()
+    {
+        v1 = new Vector <String>();
+        v1.addElement("Te has conectado con el servidor");
+        Thread hilo = new Thread(new Runnable() {
+            public void run() 
+            {
+                while (true) 
+                {
+                    try
+                    {
+                        server = new ServerSocket(5000);
+                        s1 = server.accept();
+                        exit = new DataOutputStream(s1.getOutputStream());
+                        in = new DataInputStream(s1.getInputStream());
+                        exit.flush();
+                        exit.writeUTF(v1.lastElement());
+                        v1.addElement(in.readUTF());
+                    }
+                    catch (IOException ex) {}
+                    finally
+                    {
+                        try
+                        {
+                            server.close();
+                        }
+                        catch (Exception e){}
+                    }
+                }
+            }
+        });
+        hilo.start();
+    }
+    public static void main(String[] args)
+    {
+        Servidor servidor = new Servidor();
+    }
+}
+/////////////////////////////////////////////////////////////////////////////
